@@ -106,7 +106,7 @@ void render(SDL_Window *window, SDL_Surface *win_surface, const Player &player)
     for (int y = drawStart; y < drawEnd; ++y) {
       Uint32 *pixels = (Uint32*)win_surface->pixels;
       pixels[y * (win_surface->pitch / 4) + x] = wallColor;
-    }a
+    }
   }
   SDL_UpdateWindowSurface(window);
 }
