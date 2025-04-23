@@ -4,6 +4,7 @@
 #include "render/render.hpp"
 #include "game/player.hpp"
 
+// TODO: Vector normalization needed or not lol straffing 
 // TODO: Create more robust screen resolution system. Sometimes Segfaults if screen size changes. 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
@@ -51,51 +52,17 @@ bool sdl_init(SDL_Window *&window, SDL_Surface *&win_surface)
 
 void handle_input(SDL_Event &event, bool &running, Player &player, float delta_time)
 {
-  // while(SDL_PollEvent(&event)){
-  //   switch(event.type){
-  //   case SDL_QUIT:
-  //     running = 0;
-  //     break;
-  //   case SDL_KEYDOWN:
-  //     if (event.key.keysym.sym == SDLK_q){
-  // 	running = 0;
-  //     }
-  //     ////////////////////////////////////
-  //     // W.A.S.D 
-  //     ////////////////////////////////////
-  //     if (event.key.keysym.sym == SDLK_w){
-  // 	player.velocityY += sin(player.dir) * player.thrust * delta_time;
-  // 	player.y += player.velocityY;
-  //     }
-  //     if (event.key.keysym.sym == SDLK_a){
-  // 	player.velocityX += cos(player.dir) * player.thrust * delta_time;
-  // 	player.x += player.velocityX;
-  //     }
-  //     if (event.key.keysym.sym == SDLK_s){
-  // 	// -thrust may not be the way to go
-  // 	player.velocityY += sin(player.dir) * -player.thrust * delta_time;
-  // 	player.y += player.velocityY;
-  //     }
-  //     if (event.key.keysym.sym == SDLK_d){
-  // 	player.velocityX += cos(player.dir) * -player.thrust * delta_time;
-  // 	player.x += player.velocityX;
-  //     }
-  //     ////////////////////////////////////////
-  //     if (event.key.keysym.sym == SDLK_RIGHT){
-  // 	player.dir += 0.1;
-  //     }
-  //     if (event.key.keysym.sym == SDLK_LEFT){
-  // 	player.dir -= 0.1;
-  //     }
-  //     break;
-  //   }
-  // }
-
-  
-
-
-
-  
+  while(SDL_PollEvent(&event)){
+    switch(event.type){
+    case SDL_QUIT:
+      running = 0;
+      break;
+    case SDL_KEYDOWN:
+      if (event.key.keysym.sym == SDLK_q){
+	running = 0;
+      }
+    }
+  }
 }
 
 void update(SDL_Window *window)
@@ -108,14 +75,13 @@ int main(int argc, char** args)
 {
   
   Player player = {
-    5.5f, 2.5f,  // x, y — starting at open space
+    .x = 5.5f, .y = 2.5f,  // x, y — starting at open space
     0.0f, 0.0f,  // x, y - Velocity
     0.00005f,    // thrust amount
     0.2f,        // facing east (0 radians)
-    degToRad(90),// FOV
+    degToRad(120),// FOV
     100.0f       // health
   };
-
   
   SDL_Surface *win_surface = nullptr;
   SDL_Window *window = nullptr;

@@ -1,3 +1,0 @@
-/home/malac0da/Programming/BuildClone/build/CMakeFiles/BuildClone.dir
-/home/malac0da/Programming/BuildClone/build/CMakeFiles/edit_cache.dir
-/home/malac0da/Programming/BuildClone/build/CMakeFiles/rebuild_cache.dir
