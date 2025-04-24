@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <vector>
 
 #include "render/render.hpp"
 #include "game/player.hpp"
@@ -50,76 +51,21 @@ bool sdl_init(SDL_Window *&window, SDL_Surface *&win_surface)
   return true;
 }
 
-void handle_input(SDL_Event &event, bool &running, Player &player, float &thrustX, float &thrustY)
+std::vector<SDL_Event> &getFrameEvents(void)
 {
-  const float moveSpeed = 0.5f;  // Thrust per input
-  const float rotSpeed = 0.05f;  // Rotation speed in radians
-
-  while(SDL_PollEvent(&event)) {
-    switch(event.type) {
-      case SDL_QUIT:
-        running = false;
-        break;
-
-      case SDL_KEYDOWN:
-        switch (event.key.keysym.sym) {
-          case SDLK_q:
-            running = false;
-            break;
-
-          case SDLK_w: // Forward
-            thrustX += std::cos(player.dir) * moveSpeed;
-            thrustY += std::sin(player.dir) * moveSpeed;
-            break;
-
-          case SDLK_s: // Backward
-            thrustX -= std::cos(player.dir) * moveSpeed;
-            thrustY -= std::sin(player.dir) * moveSpeed;
-            break;
-
-          case SDLK_a: // Rotate left
-            player.dir -= rotSpeed;
-            break;
-
-          case SDLK_d: // Rotate right
-            player.dir += rotSpeed;
-            break;
-        }
-        break;
-    }
-  }
+  static std::vector<SDL_Event> frame_events;
+  return frame_events;
 }
 
+void handle_input(Player &player, std::vector<SDL_Event> &frame_events)
+{
+  
+}
 
-void update(SDL_Window *window, Player &player, float thrustX, float thrustY)
+void update(SDL_Window *window, Player &player)
 {
   // Push the updated surface to the screen
   SDL_UpdateWindowSurface(window);
-
-  // Max player speed
-  // Move into player
-  const float maxSpeed = 0.2f;
-
-  // Apply thrust vector to player based on input
-  float speed = std::sqrt(thrustX * thrustX + thrustY * thrustY);
-
-  // Clamp to max speed
-  if (speed > maxSpeed) {
-    float scale = maxSpeed / speed;
-    thrustX *= scale;
-    thrustY *= scale;
-  }
-
-  // Apply movement
-  player.x += thrustX;
-  player.y += thrustY;
-
-  // Friction to slow down naturally
-  // Move into player
-  const float friction = 10.0f;
-  thrustX *= friction;
-  thrustY *= friction;
-  
 }
 
 int main(int argc, char** args)
@@ -130,7 +76,7 @@ int main(int argc, char** args)
     0.0f, 0.0f,  // x, y - Velocity
     0.0005f,    // thrust amount
     0.2f,        // facing east (0 radians)
-    degToRad(120),// FOV
+    degToRad(90),// FOV
     100.0f       // health
   };
   
@@ -149,17 +95,22 @@ int main(int argc, char** args)
 
   // Game Loop
   while(running){
+    
     // Delta time calc
     Uint32 current_time = SDL_GetTicks();
     float delta_time = (current_time - last_time) / 1000.0f;
-
-    // CLEAN
-    float thrustX = 0.0f;
-    float thrustY = 0.0f;
     
-    handle_input(event, running, player, thrustX, thrustY);
-    update(window, player, thrustX, thrustY);
+    SDL_Event event;
+    while(SDL_PollEvent(&event) != 0){
+      getFrameEvents().push_back(event);
+    }
+    
+    handle_input(player, getFrameEvents());
+    update(window, player);
     render(window, win_surface, player);
+
+    // Clear input
+    getFrameEvents().clear();
     
   }	
   sdl_quit(window);
